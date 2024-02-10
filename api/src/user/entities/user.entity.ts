@@ -1,4 +1,5 @@
 import {
+  BeforeInsert,
   Column,
   CreateDateColumn,
   DeleteDateColumn,
@@ -18,6 +19,12 @@ export class User {
   @Column({ nullable: false, unique: true })
   username: string;
 
+  @Column({ nullable: false, unique: true })
+  email: string;
+
+  @Column({ nullable: false })
+  password: string;
+
   @CreateDateColumn()
   created_at: Date;
 
@@ -26,4 +33,9 @@ export class User {
 
   @DeleteDateColumn()
   deleted_at: Date;
+
+  @BeforeInsert()
+  emailToLowerCase() {
+    this.email = this.email.toLowerCase();
+  }
 }

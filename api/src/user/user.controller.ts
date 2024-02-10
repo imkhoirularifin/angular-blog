@@ -1,7 +1,6 @@
 import {
   Controller,
   Get,
-  Post,
   Body,
   Patch,
   Param,
@@ -9,27 +8,20 @@ import {
   ParseUUIDPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
-import { Observable } from 'rxjs';
 import { User } from './entities/user.entity';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
-  @Post()
-  create(@Body() createUserDto: CreateUserDto): Observable<User> {
-    return this.userService.create(createUserDto);
-  }
-
   @Get()
-  findAll(): Observable<User[]> {
+  findAll(): Promise<User[]> {
     return this.userService.findAll();
   }
 
   @Get(':id')
-  findOne(@Param('id', new ParseUUIDPipe()) id: string): Observable<User> {
+  findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<User | null> {
     return this.userService.findOne(id);
   }
 
@@ -37,17 +29,17 @@ export class UserController {
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateUserDto: UpdateUserDto,
-  ): Observable<any> {
+  ): Promise<any> {
     return this.userService.update(id, updateUserDto);
   }
 
   @Delete(':id')
-  remove(@Param('id', new ParseUUIDPipe()) id: string): Observable<any> {
+  remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<any> {
     return this.userService.remove(id);
   }
 
-  @Patch(':id/restore')
-  restore(@Param('id', new ParseUUIDPipe()) id: string): Observable<any> {
+  @Patch('restore/:id')
+  restore(@Param('id', new ParseUUIDPipe()) id: string): Promise<any> {
     return this.userService.restore(id);
   }
 }

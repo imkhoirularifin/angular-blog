@@ -1,10 +1,9 @@
-import { Injectable } from '@nestjs/common';
-import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
-import { Observable, from } from 'rxjs';
+import { Injectable } from '@nestjs/common';
+import { CreateUserDto } from './dto/create-user.dto';
 
 @Injectable()
 export class UserService {
@@ -12,27 +11,44 @@ export class UserService {
     @InjectRepository(User) private readonly userRepository: Repository<User>,
   ) {}
 
-  create(createUserDto: CreateUserDto): Observable<User> {
-    return from(this.userRepository.save(createUserDto));
+  create(createUserDto: CreateUserDto): Promise<User> {
+    return this.userRepository.save(createUserDto);
   }
 
-  findAll(): Observable<User[]> {
-    return from(this.userRepository.find());
+  async findAll(): Promise<User[]> {
+    const users = await this.userRepository.find();
+    users.forEach((user) => {
+      user.password = undefined;
+    });
+
+    return users;
   }
 
-  findOne(id: string): Observable<User> {
-    return from(this.userRepository.findOneBy({ id }));
+  async findOne(id: string): Promise<User | null> {
+    const user = await this.userRepository.findOneBy({ id });
+    if (!user) {
+      throw new Error('User not found');
+    }
+
+    user.password = undefined;
+    return user;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto): Observable<any> {
-    return from(this.userRepository.update(id, updateUserDto));
+  findByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
+    return this.userRepository.findOne({
+      where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
+    });
   }
 
-  remove(id: string): Observable<any> {
-    return from(this.userRepository.softDelete(id));
+  update(id: string, updateUserDto: UpdateUserDto): Promise<any> {
+    return this.userRepository.update(id, updateUserDto);
   }
 
-  restore(id: string): Observable<any> {
-    return from(this.userRepository.restore(id));
+  remove(id: string): Promise<any> {
+    return this.userRepository.softDelete(id);
+  }
+
+  restore(id: string): Promise<any> {
+    return this.userRepository.restore(id);
   }
 }
