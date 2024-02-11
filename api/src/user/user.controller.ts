@@ -6,10 +6,16 @@ import {
   Param,
   Delete,
   ParseUUIDPipe,
+  UseGuards,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
 import { User } from './entities/user.entity';
+import { Role } from './enums/role.enum';
+import { Roles } from './decorator/roles.decorator';
+import { UpdateRoleDto } from './dto/update-role.dto';
+import { RolesGuard } from './guard/roles.guard';
+import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 
 @Controller('users')
 export class UserController {
@@ -31,6 +37,16 @@ export class UserController {
     @Body() updateUserDto: UpdateUserDto,
   ): Promise<any> {
     return this.userService.update(id, updateUserDto);
+  }
+
+  @Roles([Role.Admin])
+  @UseGuards(JwtAuthGuard, RolesGuard)
+  @Patch(':id/role')
+  updateRole(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Body() role: UpdateRoleDto,
+  ): Promise<any> {
+    return this.userService.updateRole(id, role);
   }
 
   @Delete(':id')

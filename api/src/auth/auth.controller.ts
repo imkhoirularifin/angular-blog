@@ -9,6 +9,7 @@ import {
 import { LocalAuthGuard } from './guard/local-auth.guard';
 import { AuthService } from './auth.service';
 import { CreateUserDto } from 'src/user/dto/create-user.dto';
+import { JwtAuthGuard } from './guard/jwt-auth.guard';
 
 @Controller('auth')
 export class AuthController {
@@ -26,7 +27,7 @@ export class AuthController {
   }
 
   // example protected route
-  @UseGuards()
+  @UseGuards(JwtAuthGuard)
   @Get('profile')
   getProfile(): any {
     return 'profile works';

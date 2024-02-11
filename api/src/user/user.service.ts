@@ -4,6 +4,7 @@ import { User } from './entities/user.entity';
 import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
+import { UpdateRoleDto } from './dto/update-role.dto';
 
 @Injectable()
 export class UserService {
@@ -20,7 +21,6 @@ export class UserService {
     users.forEach((user) => {
       user.password = undefined;
     });
-
     return users;
   }
 
@@ -29,7 +29,6 @@ export class UserService {
     if (!user) {
       throw new Error('User not found');
     }
-
     user.password = undefined;
     return user;
   }
@@ -42,6 +41,10 @@ export class UserService {
 
   update(id: string, updateUserDto: UpdateUserDto): Promise<any> {
     return this.userRepository.update(id, updateUserDto);
+  }
+
+  updateRole(id: string, role: UpdateRoleDto): Promise<any> {
+    return this.userRepository.update(id, role);
   }
 
   remove(id: string): Promise<any> {
