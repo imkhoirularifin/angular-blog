@@ -5,6 +5,11 @@ import { Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
+import {
+  IPaginationOptions,
+  Pagination,
+  paginate,
+} from 'nestjs-typeorm-paginate';
 
 @Injectable()
 export class UserService {
@@ -16,12 +21,10 @@ export class UserService {
     return this.userRepository.save(createUserDto);
   }
 
-  async findAll(): Promise<User[]> {
-    const users = await this.userRepository.find();
-    users.forEach((user) => {
-      user.password = undefined;
-    });
-    return users;
+  async paginate(options: IPaginationOptions): Promise<Pagination<User>> {
+    const result = paginate<User>(this.userRepository, options);
+    (await result).items.forEach((item) => (item.password = undefined));
+    return result;
   }
 
   async findOne(id: string): Promise<User | null> {
@@ -33,10 +36,11 @@ export class UserService {
     return user;
   }
 
-  findByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
-    return this.userRepository.findOne({
+  async findByUsernameOrEmail(usernameOrEmail: string): Promise<User | null> {
+    const result = await this.userRepository.findOne({
       where: [{ username: usernameOrEmail }, { email: usernameOrEmail }],
     });
+    return result;
   }
 
   update(id: string, updateUserDto: UpdateUserDto): Promise<any> {

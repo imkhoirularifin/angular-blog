@@ -7,6 +7,9 @@ import {
   Delete,
   ParseUUIDPipe,
   UseGuards,
+  Query,
+  DefaultValuePipe,
+  ParseIntPipe,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -16,14 +19,19 @@ import { Roles } from './decorator/roles.decorator';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import { RolesGuard } from './guard/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
+import { Pagination } from 'nestjs-typeorm-paginate';
 
 @Controller('users')
 export class UserController {
   constructor(private readonly userService: UserService) {}
 
   @Get()
-  findAll(): Promise<User[]> {
-    return this.userService.findAll();
+  findAll(
+    @Query('page', new DefaultValuePipe(1), ParseIntPipe) page: number = 1,
+    @Query('limit', new DefaultValuePipe(10), ParseIntPipe) limit: number = 10,
+  ): Promise<Pagination<User>> {
+    limit = limit > 50 ? 50 : limit;
+    return this.userService.paginate({ page, limit });
   }
 
   @Get(':id')

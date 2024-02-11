@@ -25,7 +25,7 @@ export class User {
   @Column({ nullable: false })
   password: string;
 
-  @Column({ nullable: false, enum: ['admin', 'user'] })
+  @Column({ nullable: false, enum: ['admin', 'user'], default: 'user' })
   role: string;
 
   @CreateDateColumn()
