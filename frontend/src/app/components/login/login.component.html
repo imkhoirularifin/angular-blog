@@ -1,3 +1,35 @@
-<p>login works!</p>
+<h1>Login Form</h1>
 
-<button (click)="loginHandler(email, password)">Login</button>
+<!-- login form -->
+<form [formGroup]="loginForm" (ngSubmit)="loginHandler(loginForm)">
+  <!-- username or email -->
+  <div>
+    <label>
+      Username or Email:
+      <input
+        formControlName="usernameOrEmail"
+        placeholder="Input Username or Email"
+      />
+    </label>
+    <div *ngIf="loginForm.get('usernameOrEmail')?.errors">
+      Please provide a Username or Email.
+    </div>
+  </div>
+
+  <!-- password -->
+  <div>
+    <label>
+      Password:
+      <input
+        formControlName="password"
+        placeholder="Input Password"
+        type="password"
+      />
+    </label>
+    <div *ngIf="loginForm.get('password')?.errors">
+      Please provide a password.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="loginForm.invalid">Send</button>
+</form>

@@ -1,1 +1,73 @@
-<p>register works!</p>
+<h1>Register Form</h1>
+
+<!-- register form -->
+<form [formGroup]="registerForm" (ngSubmit)="registerHandler(registerForm)">
+  <!-- name -->
+  <div>
+    <label>
+      Name:
+      <input formControlName="name" placeholder="Name" />
+    </label>
+    <div *ngIf="registerForm.get('name')?.errors">Please provide a name.</div>
+  </div>
+
+  <!-- username -->
+  <div>
+    <label>
+      Username:
+      <input formControlName="username" placeholder="Username" />
+    </label>
+    <div *ngIf="registerForm.get('username')?.errors">
+      Please provide a username.
+    </div>
+  </div>
+
+  <!-- email -->
+  <div>
+    <label>
+      Email:
+      <input formControlName="email" placeholder="Email" />
+    </label>
+    <div *ngIf="registerForm.get('email')?.hasError('required')">
+      Please provide a email.
+    </div>
+    <div *ngIf="registerForm.get('email')?.hasError('email')">
+      Please provide a valid email.
+    </div>
+  </div>
+
+  <!-- password -->
+  <div>
+    <label>
+      Password:
+      <input
+        formControlName="password"
+        placeholder="Password"
+        type="password"
+      />
+    </label>
+    <div *ngIf="registerForm.get('password')?.hasError('required')">
+      Please provide a password.
+    </div>
+    <div *ngIf="registerForm.get('password')?.hasError('minlength')">
+      Minimum 6 character
+    </div>
+  </div>
+
+  <!-- confirm password -->
+  <div>
+    <label>
+      Confirm Password:
+      <input
+        formControlName="confirmPassword"
+        placeholder="Repeat your password"
+        type="password"
+      />
+    </label>
+    <div *ngIf="registerForm.hasError('PasswordNoMatch')">
+      Password does'nt match.
+    </div>
+  </div>
+
+  <button type="submit" [disabled]="registerForm.invalid">Sign Up</button>
+</form>
