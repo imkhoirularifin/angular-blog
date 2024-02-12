@@ -1,7 +1,6 @@
 import {
   ConflictException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { JwtService } from '@nestjs/jwt';
@@ -19,7 +18,7 @@ export class AuthService {
   async validateUser(usernameOrEmail: string, pass: string): Promise<any> {
     const user = await this.userService.findByUsernameOrEmail(usernameOrEmail);
     if (!user) {
-      throw new NotFoundException('User not found');
+      throw new UnauthorizedException('Invalid credentials');
     }
     // compare hashed password
     const isMatch = await bcrypt.compare(pass, user.password);
