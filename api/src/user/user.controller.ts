@@ -34,6 +34,15 @@ export class UserController {
     return this.userService.paginate({ page, limit });
   }
 
+  @Get('search')
+  FindByFilter(
+    @Query('filter') filter: string = '',
+    @Query('take') take: number = 10,
+    @Query('skip') skip: number = 0,
+  ): Promise<any> {
+    return this.userService.findByFilter(filter, skip, take);
+  }
+
   @Get(':id')
   findOne(@Param('id', new ParseUUIDPipe()) id: string): Promise<User | null> {
     return this.userService.findOne(id);

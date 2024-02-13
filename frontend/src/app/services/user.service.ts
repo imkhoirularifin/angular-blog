@@ -7,11 +7,21 @@ import { Injectable } from '@angular/core';
 export class UserService {
   constructor(private readonly http: HttpClient) {}
 
-  getAllUsers(page: string) {
+  getAllUsers(page: number) {
     return this.http.get('http://localhost:3000/api/users', {
       params: {
         page: page,
-        limit: '2',
+        limit: '10',
+      },
+    });
+  }
+
+  searchUsers(filter: string, skip: number) {
+    return this.http.get('http://localhost:3000/api/users/search', {
+      params: {
+        filter: filter,
+        skip: skip,
+        take: '10',
       },
     });
   }

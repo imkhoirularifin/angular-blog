@@ -1,7 +1,7 @@
 import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
-import { Repository } from 'typeorm';
+import { Like, Repository } from 'typeorm';
 import { Injectable } from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
@@ -25,6 +25,19 @@ export class UserService {
     const result = paginate<User>(this.userRepository, options);
     (await result).items.forEach((item) => (item.password = undefined));
     return result;
+  }
+
+  findByFilter(filter: string, skip: number, take: number): Promise<any> {
+    return this.userRepository.find({
+      where: [
+        { username: Like(`%${filter}%`) },
+        { email: Like(`%${filter}%`) },
+        { name: Like(`%${filter}%`) },
+      ],
+      order: { name: 'DESC' },
+      take: take,
+      skip: skip,
+    });
   }
 
   async findOne(id: string): Promise<User | null> {

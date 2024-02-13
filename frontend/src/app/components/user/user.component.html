@@ -1,4 +1,15 @@
-<p>user works!</p>
+<!-- search form -->
+<form [formGroup]="searchForm" (ngSubmit)="search(searchForm)">
+  <div class="mb-3">
+    <input
+      type="text"
+      class="form-control"
+      id="filter"
+      formControlName="filter"
+      placeholder="Search"
+    />
+  </div>
+</form>
 
 <!-- users table -->
 <table class="table table-hover">
@@ -22,4 +33,14 @@
   </tbody>
 </table>
 
-<button class="btn btn-primary" (click)="loadMore()">Load More</button>
+<button *ngIf="!isSearchState" class="btn btn-primary" (click)="loadMore()">
+  Load More
+</button>
+
+<button
+  *ngIf="isSearchState"
+  class="btn btn-primary"
+  (click)="loadMoreSearch()"
+>
+  Load More
+</button>
