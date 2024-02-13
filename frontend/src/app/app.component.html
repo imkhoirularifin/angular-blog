@@ -1,10 +1,33 @@
-<mat-toolbar color="primary">
-  <mat-toolbar-row>
-    <span>My App</span>
-    <span class="example-spacer"></span>
-    <a routerLink="/login">Login</a>
-    <a routerLink="/register">Register</a>
-    <a routerLink="/admin">Admin</a>
-  </mat-toolbar-row>
-</mat-toolbar>
-<router-outlet></router-outlet>
+<ul
+  ngbNav
+  #nav="ngbNav"
+  class="nav-tabs d-flex flex-row-reverse"
+  [activeId]="active"
+>
+  <li [ngbNavItem]="1">
+    <button ngbNavLink routerLink="/login" routerLinkActive="active">
+      Login
+    </button>
+  </li>
+  <li [ngbNavItem]="2">
+    <button ngbNavLink routerLink="/register" routerLinkActive="active">
+      Register
+    </button>
+  </li>
+  <li [ngbNavItem]="3">
+    <button ngbNavLink routerLink="/admin" routerLinkActive="active">
+      Admin
+    </button>
+  </li>
+  <li [ngbNavItem]="4">
+    <button ngbNavLink routerLink="/user" routerLinkActive="active">
+      User
+    </button>
+  </li>
+</ul>
+
+<div [ngbNavOutlet]="nav" class="mt-2"></div>
+
+<div class="container">
+  <router-outlet></router-outlet>
+</div>

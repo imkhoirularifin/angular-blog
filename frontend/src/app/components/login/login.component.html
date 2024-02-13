@@ -1,35 +1,49 @@
-<h1>Login Form</h1>
-
 <!-- login form -->
-<form [formGroup]="loginForm" (ngSubmit)="loginHandler(loginForm)">
-  <!-- username or email -->
-  <div>
-    <label>
-      Username or Email:
+<div class="row d-flex justify-content-center">
+  <h1 class="text-center">Login</h1>
+  <form
+    class="col-6"
+    [formGroup]="loginForm"
+    (ngSubmit)="loginHandler(loginForm)"
+  >
+    <!-- username or email -->
+    <div class="mb-3">
+      <label for="usernameOrEmail" class="form-label">Username or Email</label>
       <input
+        type="email"
+        class="form-control"
+        id="usernameOrEmail"
         formControlName="usernameOrEmail"
-        placeholder="Input Username or Email"
+        [ngClass]="{
+          'is-invalid': loginForm.get('usernameOrEmail')?.errors,
+          'is-valid': !loginForm.get('usernameOrEmail')?.errors
+        }"
       />
-    </label>
-    <div *ngIf="loginForm.get('usernameOrEmail')?.errors">
-      Please provide a Username or Email.
+      <div class="invalid-feedback">Please provide a Username or Email.</div>
     </div>
-  </div>
 
-  <!-- password -->
-  <div>
-    <label>
-      Password:
+    <!-- password -->
+    <div class="mb-3">
+      <label for="password" class="form-label">Password</label>
       <input
-        formControlName="password"
-        placeholder="Input Password"
         type="password"
+        class="form-control"
+        id="password"
+        formControlName="password"
+        [ngClass]="{
+          'is-invalid': loginForm.get('password')?.errors,
+          'is-valid': !loginForm.get('password')?.errors
+        }"
       />
-    </label>
-    <div *ngIf="loginForm.get('password')?.errors">
-      Please provide a password.
+      <div class="invalid-feedback">Please provide a Password.</div>
     </div>
-  </div>
 
-  <button type="submit" [disabled]="loginForm.invalid">Send</button>
-</form>
+    <button
+      type="submit"
+      class="btn btn-primary"
+      [disabled]="loginForm.invalid"
+    >
+      Login
+    </button>
+  </form>
+</div>

@@ -10,7 +10,7 @@ import {
 } from '@angular/forms';
 import { CommonModule } from '@angular/common';
 import { AuthService } from '../../services/auth.service';
-import { confirmPasswordValidator } from '../../utils/validator/confirm-password.validator';
+import { confirmPasswordValidator } from '../../utils/confirm-password.validator';
 import { map } from 'rxjs';
 
 @Component({
