@@ -1,4 +1,4 @@
-import GenerateRandomUser from '../../support/generate-random-user';
+import GenerateRandomUser from '../support/generate-random-user';
 const user = GenerateRandomUser();
 
 describe('Load, Register and Login test', () => {
