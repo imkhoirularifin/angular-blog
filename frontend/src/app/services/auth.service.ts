@@ -1,6 +1,6 @@
-import { HttpClient } from '@angular/common/http';
+import { HttpClient, HttpHeaders, HttpResponse } from '@angular/common/http';
 import { Injectable } from '@angular/core';
-import { Observable } from 'rxjs';
+import { Observable, catchError, map } from 'rxjs';
 
 @Injectable({
   providedIn: 'root',
@@ -8,11 +8,20 @@ import { Observable } from 'rxjs';
 export class AuthService {
   constructor(private http: HttpClient) {}
 
-  login(email: string, password: string): Observable<any> {
-    return this.http.post('http://localhost:3000/api/auth/login', {
-      usernameOrEmail: email,
-      password,
-    });
+  login(
+    email: string,
+    password: string
+  ): Observable<HttpResponse<ArrayBuffer>> {
+    return this.http.post<any>(
+      'http://localhost:3000/api/auth/login',
+      {
+        usernameOrEmail: email,
+        password,
+      },
+      {
+        observe: 'response',
+      }
+    );
   }
 
   register(
@@ -20,12 +29,18 @@ export class AuthService {
     username: string,
     email: string,
     password: string
-  ): Observable<any> {
-    return this.http.post('http://localhost:3000/api/auth/signup', {
-      name: name,
-      username: username,
-      email: email,
-      password: password,
-    });
+  ): Observable<HttpResponse<ArrayBuffer>> {
+    return this.http.post<any>(
+      'http://localhost:3000/api/auth/signup',
+      {
+        name: name,
+        username: username,
+        email: email,
+        password: password,
+      },
+      {
+        observe: 'response',
+      }
+    );
   }
 }

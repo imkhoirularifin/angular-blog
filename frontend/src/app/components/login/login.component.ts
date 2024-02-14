@@ -6,13 +6,13 @@ import {
   Validators,
   FormBuilder,
 } from '@angular/forms';
-import { map } from 'rxjs';
 import { CommonModule } from '@angular/common';
+import { NgbAlertModule } from '@ng-bootstrap/ng-bootstrap';
 
 @Component({
   selector: 'app-login',
   standalone: true,
-  imports: [ReactiveFormsModule, CommonModule],
+  imports: [ReactiveFormsModule, CommonModule, NgbAlertModule],
   templateUrl: './login.component.html',
   styleUrl: './login.component.css',
 })
@@ -23,6 +23,9 @@ export class LoginComponent implements OnInit {
   ) {}
 
   loginForm!: FormGroup;
+  isSuccess: boolean = false;
+  isFailed: boolean = false;
+  statusMessage!: string;
 
   ngOnInit() {
     this.loginForm = this.formBuilder.group({
@@ -37,11 +40,20 @@ export class LoginComponent implements OnInit {
     }
     this.authService
       .login(form.value.usernameOrEmail, form.value.password)
-      .pipe(
-        map((result) => {
-          console.log(result.access_token);
-        })
-      )
-      .subscribe();
+      .subscribe({
+        next: () => {
+          this.isSuccess = true;
+          setTimeout(() => {
+            this.isSuccess = false;
+          }, 5000);
+        },
+        error: (error) => {
+          this.isFailed = true;
+          setTimeout(() => {
+            this.isFailed = false;
+          }, 5000);
+          this.statusMessage = error.error.message;
+        },
+      });
   }
 }

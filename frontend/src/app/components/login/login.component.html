@@ -1,5 +1,10 @@
 <!-- login form -->
 <div class="row d-flex justify-content-center">
+  @if (isSuccess) {
+  <ngb-alert class="col-6" type="success">Login successful.</ngb-alert>
+  } @else if (isFailed) {
+  <ngb-alert class="col-6" type="danger">Error: {{ statusMessage }}</ngb-alert>
+  }
   <h1 class="text-center">Login</h1>
   <form
     class="col-6"

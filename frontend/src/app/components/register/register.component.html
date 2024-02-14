@@ -1,5 +1,12 @@
 <!-- register form -->
 <div class="row d-flex justify-content-center">
+  @if (isSuccess) {
+  <ngb-alert class="col-6" type="success"
+    >Registration successful. Please login with your new credentials.</ngb-alert
+  >
+  } @else if (isFailed) {
+  <ngb-alert class="col-6" type="danger">Error: {{ statusMessage }}</ngb-alert>
+  }
   <h1 class="text-center">Sign Up</h1>
   <form
     class="col-6"
@@ -90,7 +97,7 @@
       class="btn btn-primary"
       [disabled]="registerForm.invalid"
     >
-      Login
+      Register
     </button>
   </form>
 </div>
