@@ -10,6 +10,10 @@ import {
   Query,
   DefaultValuePipe,
   ParseIntPipe,
+  UseInterceptors,
+  UploadedFile,
+  Post,
+  Request,
 } from '@nestjs/common';
 import { UserService } from './user.service';
 import { UpdateUserDto } from './dto/update-user.dto';
@@ -20,10 +24,15 @@ import { UpdateRoleDto } from './dto/update-role.dto';
 import { RolesGuard } from './guard/roles.guard';
 import { JwtAuthGuard } from 'src/auth/guard/jwt-auth.guard';
 import { Pagination } from 'nestjs-typeorm-paginate';
+import { FileInterceptor } from '@nestjs/platform-express';
+import { CloudinaryService } from 'src/cloudinary/cloudinary.service';
 
 @Controller('users')
 export class UserController {
-  constructor(private readonly userService: UserService) {}
+  constructor(
+    private readonly userService: UserService,
+    private readonly cloudinaryService: CloudinaryService,
+  ) {}
 
   @Get()
   findAll(
@@ -74,5 +83,18 @@ export class UserController {
   @Patch('restore/:id')
   restore(@Param('id', new ParseUUIDPipe()) id: string): Promise<any> {
     return this.userService.restore(id);
+  }
+
+  @UseGuards(JwtAuthGuard)
+  @Post('upload')
+  @UseInterceptors(FileInterceptor('file'))
+  async uploadImage(
+    @UploadedFile() file: Express.Multer.File,
+    @Request() req: any,
+  ): Promise<any> {
+    const response = await this.cloudinaryService.uploadImage(file);
+    return this.userService.update(req.user.userId, {
+      profileImage: response.url,
+    });
   }
 }

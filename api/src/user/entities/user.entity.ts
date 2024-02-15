@@ -28,6 +28,9 @@ export class User {
   @Column({ nullable: false, enum: ['admin', 'user'], default: 'user' })
   role: string;
 
+  @Column({ nullable: true })
+  profileImage: string;
+
   @CreateDateColumn()
   created_at: Date;
 
