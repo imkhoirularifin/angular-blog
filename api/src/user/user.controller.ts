@@ -57,12 +57,19 @@ export class UserController {
     return this.userService.findOne(id);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Patch(':id')
   update(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() updateUserDto: UpdateUserDto,
+    @Request() req: any,
   ): Promise<any> {
-    return this.userService.update(id, updateUserDto);
+    return this.userService.update(
+      id,
+      req.user.userId,
+      req.user.role,
+      updateUserDto,
+    );
   }
 
   @Roles([Role.Admin])
@@ -71,15 +78,22 @@ export class UserController {
   updateRole(
     @Param('id', new ParseUUIDPipe()) id: string,
     @Body() role: UpdateRoleDto,
+    @Request() req: any,
   ): Promise<any> {
-    return this.userService.updateRole(id, role);
+    return this.userService.updateRole(id, req.user.userId, role);
   }
 
+  @UseGuards(JwtAuthGuard)
   @Delete(':id')
-  remove(@Param('id', new ParseUUIDPipe()) id: string): Promise<any> {
-    return this.userService.remove(id);
+  remove(
+    @Param('id', new ParseUUIDPipe()) id: string,
+    @Request() req: any,
+  ): Promise<any> {
+    return this.userService.remove(id, req.user.userId, req.user.role);
   }
 
+  @Roles([Role.Admin])
+  @UseGuards(JwtAuthGuard, RolesGuard)
   @Patch('restore/:id')
   restore(@Param('id', new ParseUUIDPipe()) id: string): Promise<any> {
     return this.userService.restore(id);
@@ -93,8 +107,13 @@ export class UserController {
     @Request() req: any,
   ): Promise<any> {
     const response = await this.cloudinaryService.uploadImage(file);
-    return this.userService.update(req.user.userId, {
-      profileImage: response.url,
-    });
+    return this.userService.update(
+      req.user.userId,
+      req.user.userId,
+      req.user.role,
+      {
+        profileImage: response.url,
+      },
+    );
   }
 }

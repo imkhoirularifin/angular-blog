@@ -2,7 +2,11 @@ import { UpdateUserDto } from './dto/update-user.dto';
 import { InjectRepository } from '@nestjs/typeorm';
 import { User } from './entities/user.entity';
 import { Like, Repository } from 'typeorm';
-import { Injectable } from '@nestjs/common';
+import {
+  Injectable,
+  NotFoundException,
+  UnauthorizedException,
+} from '@nestjs/common';
 import { CreateUserDto } from './dto/create-user.dto';
 import { UpdateRoleDto } from './dto/update-role.dto';
 import {
@@ -10,6 +14,7 @@ import {
   Pagination,
   paginate,
 } from 'nestjs-typeorm-paginate';
+import { Role } from './enums/role.enum';
 
 @Injectable()
 export class UserService {
@@ -43,7 +48,7 @@ export class UserService {
   async findOne(id: string): Promise<User | null> {
     const user = await this.userRepository.findOneBy({ id });
     if (!user) {
-      throw new Error('User not found');
+      throw new NotFoundException('User not found');
     }
     user.password = undefined;
     return user;
@@ -56,15 +61,35 @@ export class UserService {
     return result;
   }
 
-  update(id: string, updateUserDto: UpdateUserDto): Promise<any> {
+  update(
+    id: string,
+    reqUserId: string,
+    reqUserRole: string,
+    updateUserDto: UpdateUserDto,
+  ): Promise<any> {
+    if (reqUserRole !== Role.Admin && id !== reqUserId) {
+      throw new UnauthorizedException(
+        'You are not authorized to update this user',
+      );
+    }
     return this.userRepository.update(id, updateUserDto);
   }
 
-  updateRole(id: string, role: UpdateRoleDto): Promise<any> {
+  updateRole(id: string, reqUserId: string, role: UpdateRoleDto): Promise<any> {
+    if (id === reqUserId) {
+      throw new UnauthorizedException(
+        'Administrators are unable to modify their own roles. Please contact another administrator for assistance with role changes.',
+      );
+    }
     return this.userRepository.update(id, role);
   }
 
-  remove(id: string): Promise<any> {
+  remove(id: string, reqUserId: string, reqUserRole: string): Promise<any> {
+    if (reqUserRole !== Role.Admin && id !== reqUserId) {
+      throw new UnauthorizedException(
+        'You are not authorized to delete this user',
+      );
+    }
     return this.userRepository.softDelete(id);
   }
 
